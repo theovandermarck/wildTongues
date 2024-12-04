@@ -1,5 +1,4 @@
-filePath = '+14155038677.html'
-theirNumber = "+14155038677"
+from localData import filePath, theirNumber
 lastIndex = 0
 texts = []
 removeList = ['<u>', '</u>', '!', '?', '.', ',', ':', ';', '(', ')', '[', ']', '{', '}', '\n', '\t', '\r', '"']
