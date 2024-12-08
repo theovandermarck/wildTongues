@@ -2,9 +2,10 @@ import networkx as nx
 import matplotlib.pyplot as plt
 from collections import defaultdict
 from itertools import combinations
+import os, glob
 
 # Parameters and settings
-from localData import filePaths
+from localData import filePaths, swearList
 removeList = ['<u>', '</u>', '!', '?', '.', ',', ':', ';', '(', ')', '[', ']', '{', '}', '\n', '\t', '\r', '"']
 replaceList = [['&quot;', '"'], ['&apos;', "'"], ['&amp;', '&'], ['&lt;', '<'], ['&gt;', '>']]
 cullThreshold = 25  # Words appearing less than this will be removed
@@ -15,6 +16,8 @@ def run_analysis(filePath):
     totalMessages = 0
     totalWordLength = 0
     wordsCounted = 0
+    swears = 0
+    capitalization = 0
     texts = []
     with open(filePath, 'r', encoding='utf-8') as myFile:
         content = myFile.read()
@@ -25,6 +28,10 @@ def run_analysis(filePath):
             tbad = content[nextMessage:nextEnd]
             if '!' in tbad:
                 exclamations += 1
+            for swear in swearList:
+                if swear in tbad:
+                    swears += 1
+                    break
             if not tbad.startswith('<a'):  # Exclude links
                 for a in replaceList:
                     tbad = tbad.replace(a[0], a[1])
@@ -38,6 +45,8 @@ def run_analysis(filePath):
     word_frequencies = {}
     for text in texts:
         words = text.lower().split()
+        if text.lower() != text:
+            capitalization += 1
         for word in words:
             word_frequencies[word] = word_frequencies.get(word, 0) + 1
             totalWordLength += len(word)
@@ -46,11 +55,16 @@ def run_analysis(filePath):
     # Remove words below the frequency threshold
     filtered_words = {word: freq for word, freq in word_frequencies.items() if freq > cullThreshold}
     print('\n' +filePath)
-    print (f'{exclamations/totalMessages*100}% of messages had at least one exclamation mark in them')
-    print (f'The average word length was {totalWordLength/wordsCounted} characters')
+    print (f'{round(exclamations/totalMessages*100,2)}% of messages had at least one exclamation mark in them')
+    print (f'The average word length was {round(totalWordLength/wordsCounted,2)} characters')
+    print(f'{round(swears/totalMessages*100,2)}% of messages contained swear words or swear adjacent words')
+    print(f'{round(capitalization/totalMessages*100,2)}% of messages contained capitalization')
 
-for f in filePaths:
-    run_analysis(f)
+# for f in filePaths:
+    # run_analysis(f)
+
+for filename in glob.glob('toBeRead/*.html'):
+    run_analysis(filename)
 # Build the word co-occurrence network
 # G = nx.Graph()
 # for text in texts:
