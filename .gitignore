@@ -1,4 +1,6 @@
 *.txt
 *localData.py
 *.html
+*.png
 *.DS_Store
+*.pyc
