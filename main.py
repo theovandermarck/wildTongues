@@ -54,6 +54,13 @@ def run_analysis(filePath):
             totalWordLength += len(word)
             wordsCounted += 1
 
+    sorted_dict = {}
+    for key in sorted(word_frequencies, key=word_frequencies.get):
+        sorted_dict[key] = word_frequencies[key]
+    newFileName = f"savedData/{filename[len(filename)-17:]}.txt"
+    with open(newFileName, 'w') as file:
+        file.write(str(sorted_dict))
+
     cullThreshold = wordsCounted * 0.001
     # Remove words below the frequency threshold
     filtered_words = {word: freq for word, freq in word_frequencies.items() if freq > cullThreshold}
@@ -98,7 +105,7 @@ def run_analysis(filePath):
         color_map = cm.viridis(normalized_frequencies)
     else:
         color_map = []
-
+    plt.figure(figsize=(15, 8))
     # Draw nodes
     nx.draw_networkx_nodes(
         G, pos,
@@ -124,7 +131,7 @@ def run_analysis(filePath):
 
     # Title and save
     plt.title(filename, fontsize=16)
-    plt.savefig(f"savedImages/{filename[9:]}.png", dpi=3000, bbox_inches='tight')
+    plt.savefig(f"savedImages/{filename[9:]}.png", dpi=300, bbox_inches='tight')
     plt.show()
     plt.close()
     plt.clf()
