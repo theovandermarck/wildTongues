@@ -57,9 +57,11 @@ def run_analysis(filePath):
     sorted_dict = {}
     for key in sorted(word_frequencies, key=word_frequencies.get):
         sorted_dict[key] = word_frequencies[key]
-    newFileName = f"savedData/{filename[len(filename)-17:]}.txt"
+    newFileName = f"savedData/{filename.replace('toBeRead/','')}.txt"
     with open(newFileName, 'w') as file:
-        file.write(str(sorted_dict))
+        file.write('')
+        for key in sorted_dict:
+            file.write(f'{key}: {sorted_dict[key]}\n')
 
     cullThreshold = wordsCounted * 0.001
     # Remove words below the frequency threshold
