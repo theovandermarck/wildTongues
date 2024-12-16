@@ -20,6 +20,7 @@ def run_analysis(filePath):
     wordsCounted = 0
     swears = 0
     capitalization = 0
+    gTen = 0
     texts = []
     with open(filePath, 'r', encoding='utf-8') as myFile:
         content = myFile.read()
@@ -47,6 +48,8 @@ def run_analysis(filePath):
     word_frequencies = {}
     for text in texts:
         words = text.lower().split()
+        if len(words)>10:
+            gTen+=1
         if text.lower() != text:
             capitalization += 1
         for word in words:
@@ -72,6 +75,7 @@ def run_analysis(filePath):
     print (f'The average word length was {round(totalWordLength/wordsCounted,2)} characters')
     print(f'{round(swears/totalMessages*100,2)}% of messages contained swear words or swear adjacent words')
     print(f'{round(capitalization/totalMessages*100,2)}% of messages contained capitalization')
+    print(f'{round(gTen/totalMessages*100,2)}% of messages contained more than 10 words')
 
 
 
