@@ -7,12 +7,10 @@ from matplotlib import cm
 import numpy as np
 import matplotlib
 
-# Parameters and settings
 from localData import swearList
 removeList = ['<u>', '</u>', '!', '?', '.', ',', ':', ';', '(', ')', '[', ']', '{', '}', '\n', '\t', '\r', '"']
 replaceList = [['&quot;', '"'], ['&apos;', "'"], ['&amp;', '&'], ['&lt;', '<'], ['&gt;', '>']]
 
-# Read and process the text file
 def run_analysis(filePath):
     exclamations = 0
     totalMessages = 0
@@ -35,7 +33,7 @@ def run_analysis(filePath):
                 if swear in tbad:
                     swears += 1
                     break
-            if not tbad.startswith('<a'):  # Exclude links
+            if not tbad.startswith('<a'): 
                 for a in replaceList:
                     tbad = tbad.replace(a[0], a[1])
                 for a in removeList:
@@ -67,7 +65,6 @@ def run_analysis(filePath):
             file.write(f'{key}: {sorted_dict[key]}\n')
 
     cullThreshold = wordsCounted * 0.001
-    # Remove words below the frequency threshold
     filtered_words = {word: freq for word, freq in word_frequencies.items() if freq > cullThreshold}
 
     print('\n' +filePath)
@@ -79,7 +76,6 @@ def run_analysis(filePath):
 
 
 
-    # Create the graph
     G = nx.Graph()
     for text in texts:
         words = [word.lower() for word in text.split() if word.lower() in filtered_words]
@@ -91,20 +87,15 @@ def run_analysis(filePath):
                     else:
                         G.add_edge(word1, word2, weight=1)
 
-    # Remove low-weight edges before calculating layout
+    
     # threshold = 2
     # edges_to_remove = [(u, v) for u, v, weight in G.edges(data='weight') if weight < threshold]
     # G.remove_edges_from(edges_to_remove)
 
-    # Optionally remove isolated nodes (nodes with no edges)
-
-    # Set node sizes based on frequencies
     node_sizes = [max(filtered_words[word] * 5, 50) for word in G.nodes]
 
-    # Generate the layout after graph modification
     pos = nx.spring_layout(G, seed=42, k=0.3)
 
-    # Prepare color map
     frequencies = [filtered_words[word] for word in G.nodes]
     if frequencies:
         normalized_frequencies = np.array(frequencies) / max(frequencies)
@@ -112,7 +103,6 @@ def run_analysis(filePath):
     else:
         color_map = []
     plt.figure(figsize=(15, 8))
-    # Draw nodes
     nx.draw_networkx_nodes(
         G, pos,
         node_size=node_sizes,
@@ -120,7 +110,6 @@ def run_analysis(filePath):
         alpha=0.8
     )
 
-    # Draw edges
     edge_widths = [G[u][v]['weight'] * 0.01 for u, v in G.edges]
     nx.draw_networkx_edges(
         G, pos,
@@ -128,14 +117,12 @@ def run_analysis(filePath):
         edge_color='gray'
     )
 
-    # Draw labels
     nx.draw_networkx_labels(
         G, pos,
         font_size=5,
         font_color='red'
     )
 
-    # Title and save
     plt.title(filename, fontsize=16)
     plt.savefig(f"savedImages/{filename[9:]}.png", dpi=300, bbox_inches='tight')
     plt.show()
@@ -149,7 +136,6 @@ def run_analysis(filePath):
 
 for filename in glob.glob('toBeRead/*.html'):
     run_analysis(filename)
-# Build the word co-occurrence network
 # G = nx.Graph()
 # for text in texts:
 #     words = [word.lower() for word in text.split() if word.lower() in filtered_words]
@@ -160,16 +146,12 @@ for filename in glob.glob('toBeRead/*.html'):
 #             else:
 #                 G.add_edge(word1, word2, weight=1)
 
-# # Set node sizes based on frequencies
 # node_sizes = [filtered_words[word] * 1 for word in G.nodes]
 
-# # Draw the graph
 # plt.figure(figsize=(15, 10))
 
-# # Adjust layout for better spacing
 # pos = nx.spring_layout(G, seed=42, k=0.4)
 
-# # Draw nodes without white circles
 # nx.draw_networkx_nodes(
 #     G, pos,
 #     node_size=node_sizes,
@@ -178,7 +160,6 @@ for filename in glob.glob('toBeRead/*.html'):
 #     edgecolors='none'  # Removes the border
 # )
 
-# # Draw edges
 # nx.draw_networkx_edges(
 #     G, pos,
 #     alpha=0.6,
@@ -186,7 +167,6 @@ for filename in glob.glob('toBeRead/*.html'):
 #     edge_color='gray'
 # )
 
-# # Draw labels in red
 # nx.draw_networkx_labels(
 #     G, pos,
 #     font_size=10,
